@@ -78,14 +78,20 @@ class Organism():
         self.eval_env = gym.make('Walker-v0', body=self.body, max_episode_steps=500)
 
         self.model = PPO('MlpPolicy', self.train_env, verbose=0)
+        self.trained = False
 
     def train(self, training_steps=50000, verbose=True):
         '''
         Trains ppo agent on the environment
         '''
-        self.model.learn(total_timesteps=training_steps)
-        if verbose:
-            print(f"Training complete after {training_steps} steps.")
+        if not self.trained:
+            self.model.learn(total_timesteps=training_steps)
+            self.trained = True
+            if verbose:
+                print(f"Training complete after {training_steps} steps.")
+        else:
+            if verbose:
+                print("Model already trained.")
 
     def evaluate(self, episodes=10, steps=500, verbose=0):
         '''
