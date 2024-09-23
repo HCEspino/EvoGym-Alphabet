@@ -77,7 +77,7 @@ class Organism():
         self.train_env = gym.make('Walker-v0', body=self.body, max_episode_steps=100)
         self.eval_env = gym.make('Walker-v0', body=self.body, max_episode_steps=500)
 
-        self.model = PPO('MlpPolicy', self.train_env, verbose=2)
+        self.model = PPO('MlpPolicy', self.train_env, verbose=0)
 
     def train(self, training_steps=50000, verbose=True):
         '''
@@ -87,7 +87,7 @@ class Organism():
         if verbose:
             print(f"Training complete after {training_steps} steps.")
 
-    def evaluate(self, episodes=10, steps=500, verbose=True):
+    def evaluate(self, episodes=10, steps=500, verbose=0):
         '''
         Evaluates the organism by running several episodes and calculating average fitness.
         '''
@@ -102,11 +102,11 @@ class Organism():
                 episode_reward += reward
 
             total_reward += episode_reward
-            if verbose:
+            if verbose >= 2:
                 print(f"Episode {episode + 1} reward: {episode_reward}")
 
         self.fitness = total_reward / episodes
-        if verbose:
+        if verbose >= 1:
             print(f"Average fitness over {episodes} episodes: {self.fitness}")
 
 
@@ -144,7 +144,7 @@ class Organism():
             action, _ = self.model.predict(obs)
             obs, _, _, _, _ = env.step(action)
             images.append(env.render())
-            distances.append(np.mean(env.object_pos_at_time(env.get_time(), "robot")))
+            distances.append(np.mean(env.unwrapped.object_pos_at_time(env.unwrapped.get_time(), "robot")))
 
         env.close()
         make_video(images, distances, video_dir, video_name)

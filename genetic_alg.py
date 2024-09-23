@@ -1,6 +1,9 @@
 from robots import Organism, random_from_shape
 import numpy as np
 
+def softmax(x):
+    return np.exp(x) / np.sum(np.exp(x), axis=0)
+
 class GeneticAlgorithm():
     def __init__(self, population_size=16, generations=100, shape_file=None):
         self.population_size = population_size
@@ -28,12 +31,17 @@ class GeneticAlgorithm():
         for organism in self.population:
             organism.train(training_steps)
 
-    def evaluate_population(self, episodes=10, steps=500):
+    def evaluate_population(self, episodes=10, steps=500, verbose=True):
         '''
         Evaluates the entire population
         '''
         for organism in self.population:
             organism.evaluate(episodes, steps)
+
+        if verbose:
+            print(f"Generation {self.generation_count}")
+            print(f"Best fitness: {self.best_fitness}, Average fitness: {np.mean([x.fitness for x in self.population])}")
+            print(f"Population size: {len(self.population)}")
 
     def evolve(self):
         '''
@@ -56,10 +64,10 @@ class GeneticAlgorithm():
         while len(new_population) + len(pairs) < self.population_size:
 
             # Select parents based on fitness
-            parent1 = np.random.choice(new_population, p=[x.fitness for x in new_population])
+            parent1 = np.random.choice(new_population, p=softmax([x.fitness for x in new_population]))
             # Ensure parent2 is not the same as parent1
             other = [x for x in new_population if x != parent1]
-            parent2 = np.random.choice(other, p=[x.fitness for x in other])
+            parent2 = np.random.choice(other, p=softmax([x.fitness for x in other]))
 
             pairs.append((parent1, parent2))
 
