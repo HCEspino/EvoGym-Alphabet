@@ -75,6 +75,8 @@ class GeneticAlgorithm():
         for pair in pairs:
             new_population.append(pair[0].create_offspring(pair[1]))
 
+        self.population = new_population
+
         self.generation_count += 1
 
 

@@ -1,6 +1,6 @@
 from genetic_alg import GeneticAlgorithm
 
-ga = GeneticAlgorithm(population_size=16, generations=50, shape_file=None)
+ga = GeneticAlgorithm(population_size=16, generations=30, shape_file="D.npy")
 while ga.generation_count <= ga.generations:
     print(f"Generation {ga.generation_count}")
     ga.train_population(training_steps=50000)
